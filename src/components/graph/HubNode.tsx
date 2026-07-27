@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, type ThreeEvent } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import * as THREE from "three";
 import { getGlowTexture } from "@/lib/glowTexture";
@@ -9,12 +9,26 @@ import { getGlowTexture } from "@/lib/glowTexture";
 const CORE_RADIUS = 1.4;
 const HUB_COLOR = "244, 244, 245";
 const ACCENT_COLOR = "#22c55e";
+const CLICK_DRAG_THRESHOLD = 0.12;
 
 export default function HubNode({ onOpen }: { onOpen: () => void }) {
   const coreRef = useRef<THREE.Mesh>(null);
   const wireRef = useRef<THREE.Mesh>(null);
   const haloRef = useRef<THREE.Sprite>(null);
   const [hovered, setHovered] = useState(false);
+  const pointerDownPoint = useRef<THREE.Vector3 | null>(null);
+
+  const handlePointerDown = (event: ThreeEvent<PointerEvent>) => {
+    pointerDownPoint.current = event.point.clone();
+  };
+
+  const handlePointerUp = (event: ThreeEvent<PointerEvent>) => {
+    const down = pointerDownPoint.current;
+    pointerDownPoint.current = null;
+    if (down && down.distanceTo(event.point) < CLICK_DRAG_THRESHOLD) {
+      onOpen();
+    }
+  };
 
   useFrame((state, delta) => {
     if (wireRef.current) {
@@ -35,10 +49,8 @@ export default function HubNode({ onOpen }: { onOpen: () => void }) {
     <group
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
-      onClick={(e) => {
-        e.stopPropagation();
-        onOpen();
-      }}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
     >
       <sprite ref={haloRef}>
         <spriteMaterial
