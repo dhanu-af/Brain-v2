@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Developer Launcher",
-  description: "Personal launcher for all your websites and projects.",
+  title: "Dhanu Brain",
+  description: "The central AI hub of Dhanu's entire development ecosystem.",
 };
 
 export default function RootLayout({

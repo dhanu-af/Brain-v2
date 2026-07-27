@@ -1,7 +1,7 @@
 "use client";
 
 import type { Project } from "@/lib/types";
-import { STATUS_COLORS } from "@/lib/types";
+import { getStatusColor } from "@/lib/types";
 import IconTile from "@/components/IconTile";
 import { StarIcon } from "@/components/icons";
 
@@ -32,7 +32,7 @@ export default function ProjectListItem({
           <span className="truncate text-[13px] font-medium text-zinc-100">{project.name}</span>
           <span
             className="h-1.5 w-1.5 shrink-0 rounded-full"
-            style={{ background: STATUS_COLORS[project.status] }}
+            style={{ background: getStatusColor(project.status) }}
             title={project.status}
           />
         </div>

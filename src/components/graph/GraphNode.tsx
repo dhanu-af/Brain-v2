@@ -5,7 +5,7 @@ import { useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import * as THREE from "three";
 import type { Project } from "@/lib/types";
-import { STATUS_COLORS, TIER_RADIUS } from "@/lib/types";
+import { getStatusColor, getNodeSize } from "@/lib/types";
 import type { SimNode } from "@/lib/forceSim";
 import { getGlowTexture } from "@/lib/glowTexture";
 import IconTile from "@/components/IconTile";
@@ -37,8 +37,8 @@ export default function GraphNode({
   const dragStart = useRef(new THREE.Vector3());
   const isDragging = useRef(false);
 
-  const radius = TIER_RADIUS[project.tier] * 0.4;
-  const color = STATUS_COLORS[project.status];
+  const radius = getNodeSize(project.tier) * 0.4;
+  const color = getStatusColor(project.status);
   const glow = highlighted || hovered;
 
   useFrame((state) => {

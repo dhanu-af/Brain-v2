@@ -6,23 +6,28 @@ export interface SimNode {
   velocity: THREE.Vector3;
   pinned: boolean;
   mass: number;
+  /** Target distance from the origin (hub) — the node's ring. 0 for the hub itself. */
+  ringRadius: number;
   driftPhase: THREE.Vector3;
 }
 
 export interface SimLink {
   sourceIndex: number;
   targetIndex: number;
+  /** Carried through for rendering only — physics treats every link the same. */
+  kind?: string;
 }
 
 const REPULSION_STRENGTH = 16;
 const SPRING_STRENGTH = 0.55;
 const SPRING_LENGTH = 3.4;
-const CENTER_STRENGTH = 0.018;
+const RADIAL_STRENGTH = 0.5;
 const DAMPING = 0.86;
 const DRIFT_STRENGTH = 0.02;
 const MAX_SPEED = 4;
 
 const scratchDelta = new THREE.Vector3();
+const scratchRadial = new THREE.Vector3();
 
 export class ForceSimulation {
   nodes: SimNode[];
@@ -69,7 +74,13 @@ export class ForceSimulation {
         continue;
       }
 
-      node.velocity.addScaledVector(node.position, -CENTER_STRENGTH * dt);
+      // Pull each node toward its own ring's target distance from the hub,
+      // rather than straight to the origin — this is what keeps the tiers
+      // visually organized into concentric shells as the graph settles.
+      const dist = node.position.length() || 0.0001;
+      const radialError = node.ringRadius - dist;
+      scratchRadial.copy(node.position).divideScalar(dist);
+      node.velocity.addScaledVector(scratchRadial, radialError * RADIAL_STRENGTH * dt);
 
       node.velocity.x += Math.sin(this.time * 0.15 + node.driftPhase.x) * DRIFT_STRENGTH * dt;
       node.velocity.y += Math.cos(this.time * 0.12 + node.driftPhase.y) * DRIFT_STRENGTH * dt;

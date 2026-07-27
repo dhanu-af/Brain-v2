@@ -3,12 +3,14 @@
 import { useMemo, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import type { Project } from "@/lib/types";
+import { HUB_ID } from "@/lib/types";
 import { useForceGraph } from "@/hooks/useForceGraph";
 import type { ForceSimulation } from "@/lib/forceSim";
 import GraphNode from "./GraphNode";
 import GraphEdges from "./GraphEdges";
 import ParticleField from "./ParticleField";
 import CameraRig from "./CameraRig";
+import HubNode from "./HubNode";
 
 function SimulationDriver({ simulation }: { simulation: ForceSimulation }) {
   useFrame((_, delta) => {
@@ -19,7 +21,19 @@ function SimulationDriver({ simulation }: { simulation: ForceSimulation }) {
 
 function matchesQuery(project: Project, query: string): boolean {
   if (!query) return false;
-  const haystack = [project.name, project.category, project.status, ...(project.techStack ?? [])]
+  const haystack = [
+    project.name,
+    project.category,
+    project.status,
+    project.company,
+    project.framework,
+    project.database,
+    project.description,
+    ...(project.techStack ?? []),
+    ...(project.tags ?? []),
+    ...(project.aiFeatures ?? []),
+  ]
+    .filter(Boolean)
     .join(" ")
     .toLowerCase();
   return haystack.includes(query);
@@ -30,43 +44,49 @@ export default function Scene({
   searchQuery,
   focusedProjectId,
   onSelectProject,
+  onOpenInsights,
 }: {
   projects: Project[];
   searchQuery: string;
   focusedProjectId: string | null;
   onSelectProject: (project: Project) => void;
+  onOpenInsights: () => void;
 }) {
-  const { simulation, nodes, links } = useForceGraph(projects);
+  const { simulation, nodes, links, nodeById } = useForceGraph(projects);
   const [dragging, setDragging] = useState(false);
 
   const query = searchQuery.trim().toLowerCase();
   const hasQuery = query.length > 0;
 
-  const focusIndex = useMemo(
-    () => (focusedProjectId ? projects.findIndex((p) => p.id === focusedProjectId) : -1),
-    [projects, focusedProjectId]
+  const focusNode = focusedProjectId ? nodeById.get(focusedProjectId) ?? null : null;
+
+  const projectNodes = useMemo(
+    () => projects.map((project) => ({ project, node: nodeById.get(project.id) })),
+    [projects, nodeById]
   );
-  const focusNode = focusIndex >= 0 ? nodes[focusIndex] : null;
 
   return (
-    <Canvas camera={{ position: [0, 2, 15], fov: 50 }} gl={{ antialias: true }} dpr={[1, 2]}>
+    <Canvas camera={{ position: [0, 6, 24], fov: 50 }} gl={{ antialias: true }} dpr={[1, 2]}>
       <color attach="background" args={["#09090b"]} />
-      <fog attach="fog" args={["#09090b", 15, 36]} />
+      <fog attach="fog" args={["#09090b", 22, 55]} />
       <ambientLight intensity={0.55} />
-      <pointLight position={[10, 10, 10]} intensity={60} />
-      <pointLight position={[-12, -8, -10]} intensity={30} color="#60a5fa" />
+      <pointLight position={[14, 14, 14]} intensity={80} />
+      <pointLight position={[-16, -10, -14]} intensity={40} color="#60a5fa" />
 
       <ParticleField />
       <SimulationDriver simulation={simulation} />
       <GraphEdges nodes={nodes} links={links} />
 
-      {projects.map((project, i) => {
+      <HubNode onOpen={onOpenInsights} />
+
+      {projectNodes.map(({ project, node }) => {
+        if (!node) return null;
         const matched = hasQuery ? matchesQuery(project, query) : false;
         return (
           <GraphNode
             key={project.id}
             project={project}
-            node={nodes[i]}
+            node={node}
             highlighted={matched || focusedProjectId === project.id}
             dimmed={hasQuery && !matched}
             onSelect={onSelectProject}
@@ -77,7 +97,7 @@ export default function Scene({
 
       <CameraRig
         focusKey={focusedProjectId}
-        focusPosition={focusNode ? focusNode.position : null}
+        focusPosition={focusNode && focusNode.id !== HUB_ID ? focusNode.position : null}
         enabled={!dragging}
       />
     </Canvas>

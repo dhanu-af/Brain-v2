@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Project } from "@/lib/types";
-import { STATUS_COLORS } from "@/lib/types";
+import { HUB_ID, getStatusColor } from "@/lib/types";
+import { buildLinks } from "@/lib/graphData";
 import IconTile from "@/components/IconTile";
 import {
   CheckIcon,
@@ -58,16 +59,33 @@ function InfoRow({ label, value }: { label: string; value?: string }) {
 
 export default function ProjectModal({
   project,
+  allProjects,
   isFavorite,
   onToggleFavorite,
   onClose,
 }: {
   project: Project | null;
+  allProjects: Project[];
   isFavorite: boolean;
   onToggleFavorite: (id: string) => void;
   onClose: () => void;
 }) {
   const [copied, setCopied] = useState(false);
+
+  const connectedNames = useMemo(() => {
+    if (!project) return [];
+    const links = buildLinks(allProjects, HUB_ID);
+    const byId = new Map(allProjects.map((p) => [p.id, p]));
+    const connectedIds = new Set<string>();
+    for (const link of links) {
+      if (link.source === HUB_ID || link.target === HUB_ID) continue;
+      if (link.source === project.id) connectedIds.add(link.target);
+      if (link.target === project.id) connectedIds.add(link.source);
+    }
+    return Array.from(connectedIds)
+      .map((id) => byId.get(id)?.name)
+      .filter((name): name is string => Boolean(name));
+  }, [project, allProjects]);
 
   async function handleCopy(project: Project) {
     const url = project.website ?? project.localhost ?? "";
@@ -111,7 +129,7 @@ export default function ProjectModal({
                   <div className="mt-1 flex items-center gap-1.5">
                     <span
                       className="h-1.5 w-1.5 rounded-full"
-                      style={{ background: STATUS_COLORS[project.status] }}
+                      style={{ background: getStatusColor(project.status) }}
                     />
                     <span className="text-xs text-zinc-400">
                       {project.status} · {project.category}
@@ -142,6 +160,9 @@ export default function ProjectModal({
             </div>
 
             <p className="mt-4 text-[13px] leading-relaxed text-zinc-300">{project.description}</p>
+            {project.purpose && (
+              <p className="mt-1.5 text-[12px] italic leading-relaxed text-zinc-500">{project.purpose}</p>
+            )}
 
             <div className="mt-4 flex flex-wrap gap-2">
               {project.website && (
@@ -174,6 +195,25 @@ export default function ProjectModal({
               </ActionButton>
             </div>
 
+            {project.screenshots && project.screenshots.length > 0 && (
+              <div className="mt-5">
+                <span className="text-[11px] uppercase tracking-wider text-zinc-500">
+                  Screenshots
+                </span>
+                <div className="mt-1.5 flex gap-2 overflow-x-auto pb-1">
+                  {project.screenshots.map((src) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      key={src}
+                      src={src}
+                      alt=""
+                      className="h-24 w-40 shrink-0 rounded-lg object-cover ring-1 ring-inset ring-white/[0.08]"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
             {project.techStack && project.techStack.length > 0 && (
               <div className="mt-5">
                 <span className="text-[11px] uppercase tracking-wider text-zinc-500">
@@ -193,10 +233,32 @@ export default function ProjectModal({
             )}
 
             <div className="mt-5 grid grid-cols-2 gap-4">
+              <InfoRow label="Company" value={project.company} />
+              <InfoRow label="Framework" value={project.framework} />
               <InfoRow label="Database" value={project.database} />
               <InfoRow label="Hosting" value={project.hosting} />
+              <InfoRow label="Version" value={project.version} />
+              <InfoRow label="Created" value={project.createdDate} />
               <InfoRow label="Last Updated" value={project.lastUpdated} />
             </div>
+
+            {connectedNames.length > 0 && (
+              <div className="mt-5">
+                <span className="text-[11px] uppercase tracking-wider text-zinc-500">
+                  Connected Projects
+                </span>
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {connectedNames.map((name) => (
+                    <span
+                      key={name}
+                      className="rounded-full bg-white/[0.05] px-2.5 py-1 text-[11px] text-zinc-300 ring-1 ring-inset ring-white/[0.08]"
+                    >
+                      {name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {project.aiFeatures && project.aiFeatures.length > 0 && (
               <div className="mt-5">
