@@ -8,8 +8,12 @@ import ProjectModal from "@/components/modal/ProjectModal";
 import AIInsights from "@/components/modal/AIInsights";
 import {
   getFavoritesSnapshot,
+  getRenamesServerSnapshot,
+  getRenamesSnapshot,
   getServerSnapshot,
+  renameProject,
   subscribeFavorites,
+  subscribeRenames,
   toggleFavorite,
 } from "@/lib/storage";
 
@@ -34,30 +38,38 @@ function matchesQuery(project: Project, query: string): boolean {
 
 export default function UniverseApp({ projects }: { projects: Project[] }) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [focusedProjectId, setFocusedProjectId] = useState<string | null>(null);
   const [insightsOpen, setInsightsOpen] = useState(false);
 
   const favorites = useSyncExternalStore(subscribeFavorites, getFavoritesSnapshot, getServerSnapshot);
+  const renames = useSyncExternalStore(subscribeRenames, getRenamesSnapshot, getRenamesServerSnapshot);
+
+  const displayProjects = useMemo(() => {
+    return projects.map((project) => (renames[project.id] ? { ...project, name: renames[project.id] } : project));
+  }, [projects, renames]);
 
   const searchMatchId = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     if (!query) return null;
-    const match = projects.find((project) => matchesQuery(project, query));
+    const match = displayProjects.find((project) => matchesQuery(project, query));
     return match?.id ?? null;
-  }, [searchQuery, projects]);
+  }, [searchQuery, displayProjects]);
 
   const activeFocusId = searchMatchId ?? focusedProjectId;
+  const selectedProject = selectedProjectId
+    ? displayProjects.find((project) => project.id === selectedProjectId) ?? null
+    : null;
 
   function handleSelectProject(project: Project) {
     setFocusedProjectId(project.id);
-    setSelectedProject(project);
+    setSelectedProjectId(project.id);
   }
 
   return (
     <div className="fixed inset-0 overflow-hidden bg-[#09090b]">
       <Scene
-        projects={projects}
+        projects={displayProjects}
         searchQuery={searchQuery}
         focusedProjectId={activeFocusId}
         onSelectProject={handleSelectProject}
@@ -65,7 +77,7 @@ export default function UniverseApp({ projects }: { projects: Project[] }) {
       />
 
       <SidePanel
-        projects={projects}
+        projects={displayProjects}
         favorites={favorites}
         onToggleFavorite={toggleFavorite}
         onSelectProject={handleSelectProject}
@@ -76,13 +88,14 @@ export default function UniverseApp({ projects }: { projects: Project[] }) {
 
       <ProjectModal
         project={selectedProject}
-        allProjects={projects}
+        allProjects={displayProjects}
         isFavorite={selectedProject ? favorites.includes(selectedProject.id) : false}
         onToggleFavorite={toggleFavorite}
-        onClose={() => setSelectedProject(null)}
+        onRenameProject={renameProject}
+        onClose={() => setSelectedProjectId(null)}
       />
 
-      <AIInsights projects={projects} open={insightsOpen} onClose={() => setInsightsOpen(false)} />
+      <AIInsights projects={displayProjects} open={insightsOpen} onClose={() => setInsightsOpen(false)} />
     </div>
   );
 }

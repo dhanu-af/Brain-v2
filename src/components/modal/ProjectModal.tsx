@@ -62,15 +62,26 @@ export default function ProjectModal({
   allProjects,
   isFavorite,
   onToggleFavorite,
+  onRenameProject,
   onClose,
 }: {
   project: Project | null;
   allProjects: Project[];
   isFavorite: boolean;
   onToggleFavorite: (id: string) => void;
+  onRenameProject: (id: string, name: string) => void;
   onClose: () => void;
 }) {
   const [copied, setCopied] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const [draftName, setDraftName] = useState("");
+  const [lastProjectId, setLastProjectId] = useState<string | null>(null);
+
+  const currentProjectId = project?.id ?? null;
+  if (currentProjectId !== lastProjectId) {
+    setLastProjectId(currentProjectId);
+    if (editingName) setEditingName(false);
+  }
 
   const connectedNames = useMemo(() => {
     if (!project) return [];
@@ -86,6 +97,16 @@ export default function ProjectModal({
       .map((id) => byId.get(id)?.name)
       .filter((name): name is string => Boolean(name));
   }, [project, allProjects]);
+
+  function startRename(project: Project) {
+    setDraftName(project.name);
+    setEditingName(true);
+  }
+
+  function commitRename(project: Project) {
+    onRenameProject(project.id, draftName);
+    setEditingName(false);
+  }
 
   async function handleCopy(project: Project) {
     const url = project.website ?? project.localhost ?? "";
@@ -125,7 +146,27 @@ export default function ProjectModal({
               <div className="flex items-center gap-3">
                 <IconTile name={project.name} icon={project.icon} size={52} />
                 <div>
-                  <h2 className="text-lg font-semibold text-zinc-100">{project.name}</h2>
+                  {editingName ? (
+                    <input
+                      autoFocus
+                      value={draftName}
+                      onChange={(e) => setDraftName(e.target.value)}
+                      onBlur={() => commitRename(project)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") commitRename(project);
+                        if (e.key === "Escape") setEditingName(false);
+                      }}
+                      className="rounded-md border border-white/[0.16] bg-white/[0.06] px-1.5 py-0.5 text-lg font-semibold text-zinc-100 outline-none"
+                    />
+                  ) : (
+                    <h2
+                      className="cursor-text text-lg font-semibold text-zinc-100 hover:underline hover:decoration-dotted"
+                      title="Click to rename"
+                      onClick={() => startRename(project)}
+                    >
+                      {project.name}
+                    </h2>
+                  )}
                   <div className="mt-1 flex items-center gap-1.5">
                     <span
                       className="h-1.5 w-1.5 rounded-full"
