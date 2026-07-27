@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { Project } from "@/lib/types";
 import { SearchIcon } from "@/components/icons";
+import { logout } from "@/lib/auth-actions";
 import ProjectListItem from "./ProjectListItem";
 import TimeMachineList from "./TimeMachineList";
 
@@ -84,13 +85,25 @@ export default function SidePanel({
       <div className="flex flex-col gap-3 border-b border-white/[0.06] p-4">
         <div className="flex items-center justify-between">
           <h1 className="text-[13px] font-semibold tracking-wide text-zinc-100">Dhanu Brain</h1>
-          <button
-            type="button"
-            onClick={onOpenInsights}
-            className="rounded-full bg-white/[0.04] px-2.5 py-1 text-[11px] font-medium text-zinc-300 ring-1 ring-inset ring-white/[0.08] transition-colors hover:bg-white/[0.08]"
-          >
-            AI Insights
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={onOpenInsights}
+              className="rounded-full bg-white/[0.04] px-2.5 py-1 text-[11px] font-medium text-zinc-300 ring-1 ring-inset ring-white/[0.08] transition-colors hover:bg-white/[0.08]"
+            >
+              AI Insights
+            </button>
+            <form action={logout}>
+              <button
+                type="submit"
+                title="Log out"
+                aria-label="Log out"
+                className="rounded-full bg-white/[0.04] px-2.5 py-1 text-[11px] font-medium text-zinc-400 ring-1 ring-inset ring-white/[0.08] transition-colors hover:bg-white/[0.08] hover:text-zinc-200"
+              >
+                Log out
+              </button>
+            </form>
+          </div>
         </div>
 
         <div className="relative">
