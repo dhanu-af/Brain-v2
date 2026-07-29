@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Project } from "@/lib/types";
-import { SearchIcon } from "@/components/icons";
+import { ChevronLeftIcon, ChevronRightIcon, SearchIcon } from "@/components/icons";
 import { logout } from "@/lib/auth-actions";
 import ProjectListItem from "./ProjectListItem";
 import TimeMachineList from "./TimeMachineList";
@@ -30,6 +30,7 @@ export default function SidePanel({
   onSearchChange: (value: string) => void;
   onOpenInsights: () => void;
 }) {
+  const [collapsed, setCollapsed] = useState(false);
   const [tab, setTab] = useState<Tab>("browse");
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [activeStatus, setActiveStatus] = useState<string>("All");
@@ -81,7 +82,23 @@ export default function SidePanel({
   }, [filtered]);
 
   return (
-    <aside className="pointer-events-auto fixed inset-y-0 right-0 z-20 flex w-[360px] flex-col border-l border-white/[0.08] bg-[#09090b]/70 backdrop-blur-2xl">
+    <aside
+      className={`pointer-events-auto fixed inset-y-0 right-0 z-20 flex flex-col border-l border-white/[0.08] bg-[#09090b]/70 backdrop-blur-2xl transition-[width] duration-300 ease-in-out ${
+        collapsed ? "w-3" : "w-[360px]"
+      }`}
+    >
+      <button
+        type="button"
+        onClick={() => setCollapsed((v) => !v)}
+        aria-label={collapsed ? "Expand panel" : "Collapse panel"}
+        title={collapsed ? "Expand panel" : "Collapse panel"}
+        className="absolute -left-3.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/[0.1] bg-[#141417] text-zinc-300 shadow-lg transition-colors hover:bg-white/[0.08] hover:text-zinc-100"
+      >
+        {collapsed ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+      </button>
+
+      {collapsed ? null : (
+      <>
       <div className="flex flex-col gap-3 border-b border-white/[0.06] p-4">
         <div className="flex items-center justify-between">
           <h1 className="text-[13px] font-semibold tracking-wide text-zinc-100">Dhanu Brain</h1>
@@ -229,6 +246,8 @@ export default function SidePanel({
           </>
         )}
       </div>
+      </>
+      )}
     </aside>
   );
 }
