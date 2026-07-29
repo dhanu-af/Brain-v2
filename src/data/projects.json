@@ -82,6 +82,28 @@
     "lastUpdated": "2026-07-26"
   },
   {
+    "id": "dhanu-ai",
+    "name": "Dhanu AI",
+    "description": "Standalone knowledge-base assistant spun off from BlendCaps' Ask-Dhanu module.",
+    "purpose": "Give SOP/QA/production Q&A its own dedicated personal tool, separate from BlendCaps.",
+    "status": "Live",
+    "category": "AI",
+    "tier": "supporting",
+    "company": "Personal",
+    "website": "https://dhanu-ai-tgtm.vercel.app",
+    "localhost": "http://localhost:3007",
+    "github": "https://github.com/dhanu-af/DhanuAI",
+    "techStack": ["Next.js 16", "Prisma", "PostgreSQL (Neon)", "TypeScript", "Tailwind CSS v4"],
+    "framework": "Next.js",
+    "database": "PostgreSQL (Neon) — its own, separate from BlendCaps'",
+    "hosting": "Vercel",
+    "tags": ["ai", "knowledge-base", "sop"],
+    "related": ["blendcaps-ops"],
+    "notes": "Rule-based keyword/token-matching Q&A (not LLM) over SOPs, quality, production, and ingredient entries. Single-user login, seeded with the real 1,567 KB entries + 756 ingredients exported read-only from BlendCaps.",
+    "createdDate": "2026-07-29",
+    "lastUpdated": "2026-07-29"
+  },
+  {
     "id": "dkns-digital",
     "name": "DKNS Digital",
     "description": "Marketing site for Dhanu's own AI/web/software agency.",
