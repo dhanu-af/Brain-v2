@@ -123,24 +123,24 @@ export default function ProjectModal({
   return (
     <AnimatePresence>
       {project && (
-        <motion.div
-          key="backdrop"
-          className="fixed inset-0 z-30 flex items-center justify-center bg-black/60 p-6 backdrop-blur-md"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.25 }}
-          onClick={onClose}
-        >
+        <>
           <motion.div
-            key="modal"
+            key="backdrop"
+            className="fixed inset-0 z-30"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onClose}
+          />
+          <motion.div
+            key="panel"
             onClick={(e) => e.stopPropagation()}
-            initial={{ opacity: 0, scale: 0.92, rotateX: -8, y: 16 }}
-            animate={{ opacity: 1, scale: 1, rotateX: 0, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, rotateX: 6, y: 10 }}
-            transition={{ type: "spring", stiffness: 260, damping: 26 }}
-            style={{ perspective: 1200, transformStyle: "preserve-3d" }}
-            className="max-h-[85vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-white/[0.1] bg-white/[0.06] p-6 shadow-2xl backdrop-blur-2xl"
+            initial={{ opacity: 0, x: 60 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 60 }}
+            transition={{ type: "spring", stiffness: 260, damping: 28 }}
+            className="fixed inset-y-0 right-0 z-30 w-full max-w-[400px] overflow-y-auto border-l border-white/[0.1] bg-[#050505]/85 p-6 shadow-2xl backdrop-blur-2xl"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
@@ -255,6 +255,22 @@ export default function ProjectModal({
               </div>
             )}
 
+            {(project.lastUpdated || project.notes) && (
+              <div className="mt-5 rounded-xl border border-white/[0.08] bg-white/[0.03] p-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] uppercase tracking-wider text-zinc-500">
+                    Recent Activity
+                  </span>
+                  {project.lastUpdated && (
+                    <span className="text-[11px] text-zinc-500">{project.lastUpdated}</span>
+                  )}
+                </div>
+                {project.notes && (
+                  <p className="mt-1.5 text-[13px] leading-relaxed text-zinc-300">{project.notes}</p>
+                )}
+              </div>
+            )}
+
             {project.techStack && project.techStack.length > 0 && (
               <div className="mt-5">
                 <span className="text-[11px] uppercase tracking-wider text-zinc-500">
@@ -280,7 +296,6 @@ export default function ProjectModal({
               <InfoRow label="Hosting" value={project.hosting} />
               <InfoRow label="Version" value={project.version} />
               <InfoRow label="Created" value={project.createdDate} />
-              <InfoRow label="Last Updated" value={project.lastUpdated} />
             </div>
 
             {connectedNames.length > 0 && (
@@ -316,16 +331,8 @@ export default function ProjectModal({
               </div>
             )}
 
-            {project.notes && (
-              <div className="mt-5">
-                <span className="text-[11px] uppercase tracking-wider text-zinc-500">
-                  Development Notes
-                </span>
-                <p className="mt-1.5 text-[13px] leading-relaxed text-zinc-300">{project.notes}</p>
-              </div>
-            )}
           </motion.div>
-        </motion.div>
+        </>
       )}
     </AnimatePresence>
   );
