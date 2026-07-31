@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
+import { Bloom, EffectComposer, ToneMapping } from "@react-three/postprocessing";
+import { ToneMappingMode } from "postprocessing";
 import type { Project } from "@/lib/types";
 import { HUB_ID } from "@/lib/types";
 import { useForceGraph } from "@/hooks/useForceGraph";
@@ -102,6 +104,17 @@ export default function Scene({
         focusPosition={focusNode && focusNode.id !== HUB_ID ? focusNode.position : null}
         enabled={!dragging}
       />
+
+      <EffectComposer multisampling={0}>
+        <Bloom
+          mipmapBlur
+          intensity={0.9}
+          luminanceThreshold={0.18}
+          luminanceSmoothing={0.25}
+          radius={0.8}
+        />
+        <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+      </EffectComposer>
     </Canvas>
   );
 }

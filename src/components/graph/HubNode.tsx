@@ -15,6 +15,8 @@ export default function HubNode({ onOpen }: { onOpen: () => void }) {
   const coreRef = useRef<THREE.Mesh>(null);
   const wireRef = useRef<THREE.Mesh>(null);
   const haloRef = useRef<THREE.Sprite>(null);
+  const ringARef = useRef<THREE.Mesh>(null);
+  const ringBRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
   const pointerDownPoint = useRef<THREE.Vector3 | null>(null);
 
@@ -43,6 +45,14 @@ export default function HubNode({ onOpen }: { onOpen: () => void }) {
       const pulse = 1 + Math.sin(state.clock.elapsedTime * 0.9) * 0.06;
       haloRef.current.scale.setScalar(CORE_RADIUS * (hovered ? 9 : 7) * pulse);
     }
+    if (ringARef.current) {
+      ringARef.current.rotation.x += delta * 0.25;
+      ringARef.current.rotation.z += delta * 0.1;
+    }
+    if (ringBRef.current) {
+      ringBRef.current.rotation.y += delta * 0.18;
+      ringBRef.current.rotation.z -= delta * 0.14;
+    }
   });
 
   return (
@@ -68,7 +78,7 @@ export default function HubNode({ onOpen }: { onOpen: () => void }) {
         <meshStandardMaterial
           color={`rgb(${HUB_COLOR})`}
           emissive={ACCENT_COLOR}
-          emissiveIntensity={hovered ? 0.6 : 0.35}
+          emissiveIntensity={hovered ? 0.95 : 0.55}
           roughness={0.25}
           metalness={0.4}
         />
@@ -77,6 +87,15 @@ export default function HubNode({ onOpen }: { onOpen: () => void }) {
       <mesh ref={wireRef}>
         <icosahedronGeometry args={[CORE_RADIUS * 1.35, 1]} />
         <meshBasicMaterial color={ACCENT_COLOR} wireframe transparent opacity={0.35} />
+      </mesh>
+
+      <mesh ref={ringARef} rotation={[Math.PI / 2.4, 0, 0]}>
+        <torusGeometry args={[CORE_RADIUS * 1.9, 0.015, 8, 96]} />
+        <meshBasicMaterial color={ACCENT_COLOR} transparent opacity={0.5} />
+      </mesh>
+      <mesh ref={ringBRef} rotation={[0, 0, Math.PI / 3.2]}>
+        <torusGeometry args={[CORE_RADIUS * 2.35, 0.012, 8, 96]} />
+        <meshBasicMaterial color={ACCENT_COLOR} transparent opacity={0.35} />
       </mesh>
 
       <Html distanceFactor={9} position={[0, CORE_RADIUS + 0.6, 0]} center style={{ pointerEvents: "none" }}>
