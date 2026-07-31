@@ -7,6 +7,7 @@ import { ToneMappingMode } from "postprocessing";
 import type { Project } from "@/lib/types";
 import { HUB_ID } from "@/lib/types";
 import { useForceGraph } from "@/hooks/useForceGraph";
+import { buildLinks } from "@/lib/graphData";
 import type { ForceSimulation } from "@/lib/forceSim";
 import GraphNode from "./GraphNode";
 import GraphEdges from "./GraphEdges";
@@ -57,11 +58,30 @@ export default function Scene({
 }) {
   const { simulation, nodes, links, nodeById } = useForceGraph(projects);
   const [dragging, setDragging] = useState(false);
+  const [hoveredProjectId, setHoveredProjectId] = useState<string | null>(null);
 
   const query = searchQuery.trim().toLowerCase();
   const hasQuery = query.length > 0;
 
   const focusNode = focusedProjectId ? nodeById.get(focusedProjectId) ?? null : null;
+
+  const hoverConnectedIds = useMemo(() => {
+    if (!hoveredProjectId) return null;
+    const graphLinks = buildLinks(projects, HUB_ID);
+    const ids = new Set<string>();
+    for (const link of graphLinks) {
+      if (link.source === hoveredProjectId) ids.add(link.target);
+      if (link.target === hoveredProjectId) ids.add(link.source);
+    }
+    return ids;
+  }, [projects, hoveredProjectId]);
+
+  function handleHoverChange(id: string, isHovering: boolean) {
+    setHoveredProjectId((current) => {
+      if (isHovering) return id;
+      return current === id ? null : current;
+    });
+  }
 
   const projectNodes = useMemo(
     () => projects.map((project) => ({ project, node: nodeById.get(project.id) })),
@@ -79,22 +99,26 @@ export default function Scene({
       <ParticleField />
       <OrbitRings />
       <SimulationDriver simulation={simulation} />
-      <GraphEdges nodes={nodes} links={links} />
+      <GraphEdges nodes={nodes} links={links} highlightId={hoveredProjectId} />
 
       <HubNode onOpen={onOpenInsights} />
 
       {projectNodes.map(({ project, node }) => {
         if (!node) return null;
         const matched = hasQuery ? matchesQuery(project, query) : false;
+        const isHovered = project.id === hoveredProjectId;
+        const isHoverConnected = hoverConnectedIds?.has(project.id) ?? false;
+        const dimmedByHover = !hasQuery && hoveredProjectId != null && !isHovered && !isHoverConnected;
         return (
           <GraphNode
             key={project.id}
             project={project}
             node={node}
-            highlighted={matched || focusedProjectId === project.id}
-            dimmed={hasQuery && !matched}
+            highlighted={matched || focusedProjectId === project.id || isHovered}
+            dimmed={(hasQuery && !matched) || dimmedByHover}
             onSelect={onSelectProject}
             onDragStateChange={setDragging}
+            onHoverChange={handleHoverChange}
           />
         );
       })}

@@ -64,7 +64,15 @@ function EdgeEnergy({ nodes, links }: { nodes: SimNode[]; links: SimLink[] }) {
   );
 }
 
-export default function GraphEdges({ nodes, links }: { nodes: SimNode[]; links: SimLink[] }) {
+export default function GraphEdges({
+  nodes,
+  links,
+  highlightId,
+}: {
+  nodes: SimNode[];
+  links: SimLink[];
+  highlightId?: string | null;
+}) {
   const geometryRef = useRef<THREE.BufferGeometry>(null);
   const positions = useMemo(() => new Float32Array(links.length * 2 * 3), [links.length]);
 
@@ -72,16 +80,21 @@ export default function GraphEdges({ nodes, links }: { nodes: SimNode[]; links: 
     const array = new Float32Array(links.length * 2 * 3);
     links.forEach((link, i) => {
       const [r, g, b] = KIND_COLOR[link.kind ?? ""] ?? DEFAULT_COLOR;
+      const touchesHighlight =
+        highlightId != null &&
+        (nodes[link.sourceIndex]?.id === highlightId || nodes[link.targetIndex]?.id === highlightId);
+      const dim = highlightId != null && !touchesHighlight;
+      const factor = dim ? 0.1 : touchesHighlight ? 1.7 : 1;
       const offset = i * 6;
-      array[offset] = r;
-      array[offset + 1] = g;
-      array[offset + 2] = b;
-      array[offset + 3] = r;
-      array[offset + 4] = g;
-      array[offset + 5] = b;
+      array[offset] = r * factor;
+      array[offset + 1] = g * factor;
+      array[offset + 2] = b * factor;
+      array[offset + 3] = r * factor;
+      array[offset + 4] = g * factor;
+      array[offset + 5] = b * factor;
     });
     return array;
-  }, [links]);
+  }, [links, nodes, highlightId]);
 
   useFrame(() => {
     const geometry = geometryRef.current;

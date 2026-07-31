@@ -19,6 +19,7 @@ export default function GraphNode({
   dimmed,
   onSelect,
   onDragStateChange,
+  onHoverChange,
 }: {
   project: Project;
   node: SimNode;
@@ -26,6 +27,7 @@ export default function GraphNode({
   dimmed: boolean;
   onSelect: (project: Project) => void;
   onDragStateChange: (dragging: boolean) => void;
+  onHoverChange: (id: string, isHovering: boolean) => void;
 }) {
   const meshRef = useRef<THREE.Mesh>(null);
   const haloRef = useRef<THREE.Sprite>(null);
@@ -99,8 +101,14 @@ export default function GraphNode({
 
       <mesh
         ref={meshRef}
-        onPointerOver={() => setHovered(true)}
-        onPointerOut={() => setHovered(false)}
+        onPointerOver={() => {
+          setHovered(true);
+          onHoverChange(project.id, true);
+        }}
+        onPointerOut={() => {
+          setHovered(false);
+          onHoverChange(project.id, false);
+        }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={endDrag}
