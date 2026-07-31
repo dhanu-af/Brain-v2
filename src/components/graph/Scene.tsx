@@ -16,11 +16,19 @@ import OrbitRings from "./OrbitRings";
 import CameraRig from "./CameraRig";
 import HubNode from "./HubNode";
 
-function SimulationDriver({ simulation }: { simulation: ForceSimulation }) {
+function SimulationDriver({ simulation, enabled }: { simulation: ForceSimulation; enabled: boolean }) {
   useFrame((_, delta) => {
-    simulation.step(Math.min(delta, 0.05));
+    if (enabled) simulation.step(Math.min(delta, 0.05));
   });
   return null;
+}
+
+export interface SceneControls {
+  showLinks: boolean;
+  physicsEnabled: boolean;
+  autoRotate: boolean;
+  glowEnabled: boolean;
+  particlesEnabled: boolean;
 }
 
 function matchesQuery(project: Project, query: string): boolean {
@@ -49,12 +57,14 @@ export default function Scene({
   focusedProjectId,
   onSelectProject,
   onOpenInsights,
+  controls,
 }: {
   projects: Project[];
   searchQuery: string;
   focusedProjectId: string | null;
   onSelectProject: (project: Project) => void;
   onOpenInsights: () => void;
+  controls: SceneControls;
 }) {
   const { simulation, nodes, links, nodeById } = useForceGraph(projects);
   const [dragging, setDragging] = useState(false);
@@ -96,10 +106,10 @@ export default function Scene({
       <pointLight position={[14, 14, 14]} intensity={80} />
       <pointLight position={[-16, -10, -14]} intensity={40} color="#60a5fa" />
 
-      <ParticleField />
+      {controls.particlesEnabled && <ParticleField />}
       <OrbitRings />
-      <SimulationDriver simulation={simulation} />
-      <GraphEdges nodes={nodes} links={links} highlightId={hoveredProjectId} />
+      <SimulationDriver simulation={simulation} enabled={controls.physicsEnabled} />
+      {controls.showLinks && <GraphEdges nodes={nodes} links={links} highlightId={hoveredProjectId} />}
 
       <HubNode onOpen={onOpenInsights} />
 
@@ -127,18 +137,21 @@ export default function Scene({
         focusKey={focusedProjectId}
         focusPosition={focusNode && focusNode.id !== HUB_ID ? focusNode.position : null}
         enabled={!dragging}
+        autoRotate={controls.autoRotate}
       />
 
-      <EffectComposer multisampling={0}>
-        <Bloom
-          mipmapBlur
-          intensity={0.9}
-          luminanceThreshold={0.18}
-          luminanceSmoothing={0.25}
-          radius={0.8}
-        />
-        <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
-      </EffectComposer>
+      {controls.glowEnabled && (
+        <EffectComposer multisampling={0}>
+          <Bloom
+            mipmapBlur
+            intensity={0.9}
+            luminanceThreshold={0.18}
+            luminanceSmoothing={0.25}
+            radius={0.8}
+          />
+          <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
+        </EffectComposer>
+      )}
     </Canvas>
   );
 }

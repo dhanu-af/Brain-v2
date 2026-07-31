@@ -2,8 +2,9 @@
 
 import { useMemo, useState, useSyncExternalStore } from "react";
 import type { Project } from "@/lib/types";
-import Scene from "@/components/graph/Scene";
+import Scene, { type SceneControls } from "@/components/graph/Scene";
 import SearchBar from "@/components/SearchBar";
+import LeftControlsPanel from "@/components/LeftControlsPanel";
 import SidePanel from "@/components/panel/SidePanel";
 import ProjectModal from "@/components/modal/ProjectModal";
 import AIInsights from "@/components/modal/AIInsights";
@@ -42,6 +43,17 @@ export default function UniverseApp({ projects }: { projects: Project[] }) {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [focusedProjectId, setFocusedProjectId] = useState<string | null>(null);
   const [insightsOpen, setInsightsOpen] = useState(false);
+  const [controls, setControls] = useState<SceneControls>({
+    showLinks: true,
+    physicsEnabled: true,
+    autoRotate: false,
+    glowEnabled: true,
+    particlesEnabled: true,
+  });
+
+  function handleControlsChange(patch: Partial<SceneControls>) {
+    setControls((current) => ({ ...current, ...patch }));
+  }
 
   const favorites = useSyncExternalStore(subscribeFavorites, getFavoritesSnapshot, getServerSnapshot);
   const renames = useSyncExternalStore(subscribeRenames, getRenamesSnapshot, getRenamesServerSnapshot);
@@ -75,9 +87,12 @@ export default function UniverseApp({ projects }: { projects: Project[] }) {
         focusedProjectId={activeFocusId}
         onSelectProject={handleSelectProject}
         onOpenInsights={() => setInsightsOpen(true)}
+        controls={controls}
       />
 
       <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
+
+      <LeftControlsPanel controls={controls} onChange={handleControlsChange} />
 
       <SidePanel
         projects={displayProjects}

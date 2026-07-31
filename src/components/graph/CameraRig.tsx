@@ -12,10 +12,12 @@ export default function CameraRig({
   focusKey,
   focusPosition,
   enabled,
+  autoRotate = false,
 }: {
   focusKey: string | null;
   focusPosition: THREE.Vector3 | null;
   enabled: boolean;
+  autoRotate?: boolean;
 }) {
   const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
   const { camera } = useThree();
@@ -59,7 +61,8 @@ export default function CameraRig({
       dampingFactor={0.08}
       minDistance={3}
       maxDistance={45}
-      autoRotate={false}
+      autoRotate={autoRotate}
+      autoRotateSpeed={0.6}
     />
   );
 }
