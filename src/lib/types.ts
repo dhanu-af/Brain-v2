@@ -68,6 +68,9 @@ export function getRingRadius(tier: string): number {
   return RING_RADIUS[tier] ?? DEFAULT_RING_RADIUS;
 }
 
+// Every distinct ring distance in use — drives the orbit guide rings in the scene.
+export const TIER_RING_RADII = Array.from(new Set(Object.values(RING_RADIUS))).sort((a, b) => a - b);
+
 // Node mesh size — separate from ring distance.
 const NODE_SIZE_MAP: Record<string, number> = {
   main: 1.15,

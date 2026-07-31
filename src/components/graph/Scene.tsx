@@ -9,6 +9,7 @@ import type { ForceSimulation } from "@/lib/forceSim";
 import GraphNode from "./GraphNode";
 import GraphEdges from "./GraphEdges";
 import ParticleField from "./ParticleField";
+import OrbitRings from "./OrbitRings";
 import CameraRig from "./CameraRig";
 import HubNode from "./HubNode";
 
@@ -74,6 +75,7 @@ export default function Scene({
       <pointLight position={[-16, -10, -14]} intensity={40} color="#60a5fa" />
 
       <ParticleField />
+      <OrbitRings />
       <SimulationDriver simulation={simulation} />
       <GraphEdges nodes={nodes} links={links} />
 

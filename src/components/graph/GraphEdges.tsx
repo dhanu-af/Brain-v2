@@ -6,12 +6,12 @@ import * as THREE from "three";
 import type { SimLink, SimNode } from "@/lib/forceSim";
 
 const KIND_COLOR: Record<string, [number, number, number]> = {
-  hub: [0.32, 0.72, 0.42],
-  category: [0.58, 0.58, 0.65],
-  tech: [0.45, 0.55, 0.75],
-  related: [0.8, 0.58, 0.32],
+  hub: [0.4, 0.95, 0.55],
+  category: [0.62, 0.66, 0.78],
+  tech: [0.5, 0.68, 0.98],
+  related: [0.98, 0.68, 0.35],
 };
-const DEFAULT_COLOR: [number, number, number] = [0.58, 0.58, 0.65];
+const DEFAULT_COLOR: [number, number, number] = [0.62, 0.66, 0.78];
 
 export default function GraphEdges({ nodes, links }: { nodes: SimNode[]; links: SimLink[] }) {
   const geometryRef = useRef<THREE.BufferGeometry>(null);
@@ -59,7 +59,13 @@ export default function GraphEdges({ nodes, links }: { nodes: SimNode[]; links: 
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
         <bufferAttribute attach="attributes-color" args={[colors, 3]} />
       </bufferGeometry>
-      <lineBasicMaterial vertexColors transparent opacity={0.3} />
+      <lineBasicMaterial
+        vertexColors
+        transparent
+        opacity={0.65}
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
     </lineSegments>
   );
 }
