@@ -83,7 +83,7 @@ export default function SidePanel({
 
   return (
     <aside
-      className={`pointer-events-auto fixed inset-y-0 right-0 z-20 flex flex-col border-l border-white/[0.08] bg-[#09090b]/70 backdrop-blur-2xl transition-[width] duration-300 ease-in-out ${
+      className={`pointer-events-auto fixed inset-y-0 right-0 z-20 flex flex-col border-l border-white/[0.08] bg-[#050505]/70 backdrop-blur-2xl transition-[width] duration-300 ease-in-out ${
         collapsed ? "w-3" : "w-[360px]"
       }`}
     >

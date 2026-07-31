@@ -67,7 +67,7 @@ export default function UniverseApp({ projects }: { projects: Project[] }) {
   }
 
   return (
-    <div className="fixed inset-0 overflow-hidden bg-[#09090b]">
+    <div className="fixed inset-0 overflow-hidden bg-[#050505]">
       <Scene
         projects={displayProjects}
         searchQuery={searchQuery}

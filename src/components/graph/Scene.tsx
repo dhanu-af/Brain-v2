@@ -68,8 +68,8 @@ export default function Scene({
 
   return (
     <Canvas camera={{ position: [0, 6, 24], fov: 50 }} gl={{ antialias: true }} dpr={[1, 2]}>
-      <color attach="background" args={["#09090b"]} />
-      <fog attach="fog" args={["#09090b", 22, 55]} />
+      <color attach="background" args={["#050505"]} />
+      <fog attach="fog" args={["#050505", 26, 62]} />
       <ambientLight intensity={0.55} />
       <pointLight position={[14, 14, 14]} intensity={80} />
       <pointLight position={[-16, -10, -14]} intensity={40} color="#60a5fa" />
