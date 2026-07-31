@@ -4,6 +4,7 @@ import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import type { SimLink, SimNode } from "@/lib/forceSim";
+import { getGlowTexture } from "@/lib/glowTexture";
 
 const KIND_COLOR: Record<string, [number, number, number]> = {
   hub: [0.4, 0.95, 0.55],
@@ -12,6 +13,56 @@ const KIND_COLOR: Record<string, [number, number, number]> = {
   related: [0.98, 0.68, 0.35],
 };
 const DEFAULT_COLOR: [number, number, number] = [0.62, 0.66, 0.78];
+const TRAVEL_SPEED = 0.18;
+
+/**
+ * Small glowing "energy" points traveling from the hub out to each project
+ * along its hub link — only hub links (not the denser category/tech/related
+ * mesh) get travelers, to keep the effect readable rather than cluttered.
+ */
+function EdgeEnergy({ nodes, links }: { nodes: SimNode[]; links: SimLink[] }) {
+  const pointsRef = useRef<THREE.Points>(null);
+  const hubLinks = useMemo(() => links.filter((link) => link.kind === "hub"), [links]);
+  const phases = useMemo(() => hubLinks.map(() => Math.random()), [hubLinks]);
+  const positions = useMemo(() => new Float32Array(hubLinks.length * 3), [hubLinks.length]);
+
+  useFrame((state) => {
+    const geometry = pointsRef.current?.geometry;
+    if (!geometry) return;
+    for (let i = 0; i < hubLinks.length; i++) {
+      const { sourceIndex, targetIndex } = hubLinks[i];
+      const a = nodes[sourceIndex].position;
+      const b = nodes[targetIndex].position;
+      const t = (phases[i] + state.clock.elapsedTime * TRAVEL_SPEED) % 1;
+      const offset = i * 3;
+      positions[offset] = THREE.MathUtils.lerp(a.x, b.x, t);
+      positions[offset + 1] = THREE.MathUtils.lerp(a.y, b.y, t);
+      positions[offset + 2] = THREE.MathUtils.lerp(a.z, b.z, t);
+    }
+    const attribute = geometry.getAttribute("position") as THREE.BufferAttribute;
+    attribute.needsUpdate = true;
+  });
+
+  if (hubLinks.length === 0) return null;
+
+  return (
+    <points ref={pointsRef}>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+      </bufferGeometry>
+      <pointsMaterial
+        map={getGlowTexture()}
+        size={0.32}
+        color="#6bf5a0"
+        transparent
+        opacity={0.9}
+        depthWrite={false}
+        sizeAttenuation
+        blending={THREE.AdditiveBlending}
+      />
+    </points>
+  );
+}
 
 export default function GraphEdges({ nodes, links }: { nodes: SimNode[]; links: SimLink[] }) {
   const geometryRef = useRef<THREE.BufferGeometry>(null);
@@ -54,18 +105,21 @@ export default function GraphEdges({ nodes, links }: { nodes: SimNode[]; links: 
   if (links.length === 0) return null;
 
   return (
-    <lineSegments>
-      <bufferGeometry ref={geometryRef}>
-        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-        <bufferAttribute attach="attributes-color" args={[colors, 3]} />
-      </bufferGeometry>
-      <lineBasicMaterial
-        vertexColors
-        transparent
-        opacity={0.65}
-        blending={THREE.AdditiveBlending}
-        depthWrite={false}
-      />
-    </lineSegments>
+    <>
+      <lineSegments>
+        <bufferGeometry ref={geometryRef}>
+          <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+          <bufferAttribute attach="attributes-color" args={[colors, 3]} />
+        </bufferGeometry>
+        <lineBasicMaterial
+          vertexColors
+          transparent
+          opacity={0.65}
+          blending={THREE.AdditiveBlending}
+          depthWrite={false}
+        />
+      </lineSegments>
+      <EdgeEnergy nodes={nodes} links={links} />
+    </>
   );
 }
