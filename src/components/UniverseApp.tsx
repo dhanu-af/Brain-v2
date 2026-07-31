@@ -5,6 +5,7 @@ import type { Project } from "@/lib/types";
 import Scene, { type SceneControls } from "@/components/graph/Scene";
 import SearchBar from "@/components/SearchBar";
 import LeftControlsPanel from "@/components/LeftControlsPanel";
+import Legend from "@/components/Legend";
 import SidePanel from "@/components/panel/SidePanel";
 import ProjectModal from "@/components/modal/ProjectModal";
 import AIInsights from "@/components/modal/AIInsights";
@@ -93,6 +94,8 @@ export default function UniverseApp({ projects }: { projects: Project[] }) {
       <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
       <LeftControlsPanel controls={controls} onChange={handleControlsChange} />
+
+      <Legend />
 
       <SidePanel
         projects={displayProjects}
