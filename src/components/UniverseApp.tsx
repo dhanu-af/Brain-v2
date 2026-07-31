@@ -3,6 +3,7 @@
 import { useMemo, useState, useSyncExternalStore } from "react";
 import type { Project } from "@/lib/types";
 import Scene from "@/components/graph/Scene";
+import SearchBar from "@/components/SearchBar";
 import SidePanel from "@/components/panel/SidePanel";
 import ProjectModal from "@/components/modal/ProjectModal";
 import AIInsights from "@/components/modal/AIInsights";
@@ -75,6 +76,8 @@ export default function UniverseApp({ projects }: { projects: Project[] }) {
         onSelectProject={handleSelectProject}
         onOpenInsights={() => setInsightsOpen(true)}
       />
+
+      <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
       <SidePanel
         projects={displayProjects}
