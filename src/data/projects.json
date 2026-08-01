@@ -238,6 +238,23 @@
     "lastUpdated": "2026-07-31"
   },
   {
+    "id": "nutriai",
+    "name": "NutriAI",
+    "description": "Initial MVP: auth, onboarding, AI-powered meal analysis, and an exercise calculator.",
+    "purpose": "AI-powered nutrition and fitness assistant.",
+    "status": "Development",
+    "category": "AI",
+    "tier": "experimental",
+    "company": "Personal",
+    "vercel": "https://nutriai-sooty-kappa.vercel.app",
+    "github": "https://github.com/khdanushka-spec/nutriai",
+    "aiFeatures": ["AI-powered meal analysis"],
+    "tags": ["nutrition", "fitness", "ai"],
+    "notes": "GitHub repo (khdanushka-spec/nutriai) is currently empty — no commits at all — despite Vercel showing a deployed build with a real commit message, so this was likely deployed via direct upload rather than git. Tech stack isn't confirmed (no package.json to check), so it's deliberately left out here rather than guessed.",
+    "createdDate": "2026-08-01",
+    "lastUpdated": "2026-08-01"
+  },
+  {
     "id": "dhanushka-portfolio",
     "name": "Dhanushka Portfolio",
     "description": "Personal portfolio site — static HTML/CSS/JS.",
