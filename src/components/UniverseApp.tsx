@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState, useSyncExternalStore } from "react";
-import type { Project } from "@/lib/types";
+import type { Project, ProjectStatus } from "@/lib/types";
 import Scene, { type SceneControls } from "@/components/graph/Scene";
 import SearchBar from "@/components/SearchBar";
 import LeftControlsPanel from "@/components/LeftControlsPanel";
@@ -42,8 +42,8 @@ function matchesQuery(project: Project, query: string): boolean {
 export default function UniverseApp({ projects }: { projects: Project[] }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
-  const [focusedProjectId, setFocusedProjectId] = useState<string | null>(null);
   const [insightsOpen, setInsightsOpen] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<ProjectStatus | null>(null);
   const [controls, setControls] = useState<SceneControls>({
     showLinks: true,
     physicsEnabled: true,
@@ -70,14 +70,16 @@ export default function UniverseApp({ projects }: { projects: Project[] }) {
     return match?.id ?? null;
   }, [searchQuery, displayProjects]);
 
-  const activeFocusId = searchMatchId ?? focusedProjectId;
   const selectedProject = selectedProjectId
     ? displayProjects.find((project) => project.id === selectedProjectId) ?? null
     : null;
 
   function handleSelectProject(project: Project) {
-    setFocusedProjectId(project.id);
     setSelectedProjectId(project.id);
+  }
+
+  function handleSelectStatus(status: ProjectStatus) {
+    setStatusFilter((current) => (current === status ? null : status));
   }
 
   return (
@@ -85,17 +87,19 @@ export default function UniverseApp({ projects }: { projects: Project[] }) {
       <Scene
         projects={displayProjects}
         searchQuery={searchQuery}
-        focusedProjectId={activeFocusId}
+        focusedProjectId={searchMatchId}
+        selectedProjectId={selectedProjectId}
         onSelectProject={handleSelectProject}
         onOpenInsights={() => setInsightsOpen(true)}
         controls={controls}
+        statusFilter={statusFilter}
       />
 
       <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
       <LeftControlsPanel controls={controls} onChange={handleControlsChange} />
 
-      <Legend />
+      <Legend activeStatus={statusFilter} onSelectStatus={handleSelectStatus} />
 
       <SidePanel
         projects={displayProjects}

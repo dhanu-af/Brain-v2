@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Bloom, EffectComposer, ToneMapping } from "@react-three/postprocessing";
 import { ToneMappingMode } from "postprocessing";
-import type { Project } from "@/lib/types";
+import type { Project, ProjectStatus } from "@/lib/types";
 import { HUB_ID } from "@/lib/types";
 import { useForceGraph } from "@/hooks/useForceGraph";
 import { buildLinks } from "@/lib/graphData";
@@ -55,16 +55,23 @@ export default function Scene({
   projects,
   searchQuery,
   focusedProjectId,
+  selectedProjectId,
   onSelectProject,
   onOpenInsights,
   controls,
+  statusFilter,
 }: {
   projects: Project[];
   searchQuery: string;
+  /** Drives the camera fly-to — only ever set by search matches, not clicks. */
   focusedProjectId: string | null;
+  /** The node whose detail panel is open — highlighted, but doesn't move the camera. */
+  selectedProjectId: string | null;
   onSelectProject: (project: Project) => void;
   onOpenInsights: () => void;
   controls: SceneControls;
+  /** Set by clicking a legend pill — dims every node not matching this status. */
+  statusFilter: ProjectStatus | null;
 }) {
   const { simulation, nodes, links, nodeById } = useForceGraph(projects);
   const [dragging, setDragging] = useState(false);
@@ -119,13 +126,14 @@ export default function Scene({
         const isHovered = project.id === hoveredProjectId;
         const isHoverConnected = hoverConnectedIds?.has(project.id) ?? false;
         const dimmedByHover = !hasQuery && hoveredProjectId != null && !isHovered && !isHoverConnected;
+        const dimmedByStatus = statusFilter != null && project.status !== statusFilter;
         return (
           <GraphNode
             key={project.id}
             project={project}
             node={node}
-            highlighted={matched || focusedProjectId === project.id || isHovered}
-            dimmed={(hasQuery && !matched) || dimmedByHover}
+            highlighted={matched || focusedProjectId === project.id || selectedProjectId === project.id || isHovered}
+            dimmed={(hasQuery && !matched) || dimmedByHover || dimmedByStatus}
             onSelect={onSelectProject}
             onDragStateChange={setDragging}
             onHoverChange={handleHoverChange}

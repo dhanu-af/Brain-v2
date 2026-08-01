@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
 import type { SceneControls } from "@/components/graph/Scene";
 
 function ToggleRow({
@@ -44,39 +46,59 @@ export default function LeftControlsPanel({
   controls: SceneControls;
   onChange: (patch: Partial<SceneControls>) => void;
 }) {
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
-    <div className="pointer-events-auto fixed left-6 top-1/2 z-20 w-52 -translate-y-1/2 rounded-2xl border border-white/[0.1] bg-[#050505]/70 p-3 shadow-2xl backdrop-blur-2xl">
-      <h2 className="mb-1.5 px-2 text-[11px] font-medium uppercase tracking-wider text-zinc-500">
-        Controls
-      </h2>
-      <div className="flex flex-col gap-0.5">
-        <ToggleRow
-          label="Show Links"
-          checked={controls.showLinks}
-          onChange={() => onChange({ showLinks: !controls.showLinks })}
-        />
-        <ToggleRow
-          label="Physics"
-          checked={controls.physicsEnabled}
-          onChange={() => onChange({ physicsEnabled: !controls.physicsEnabled })}
-        />
-        <ToggleRow
-          label="Auto Rotate"
-          checked={controls.autoRotate}
-          onChange={() => onChange({ autoRotate: !controls.autoRotate })}
-        />
-        <ToggleRow
-          label="Glow"
-          checked={controls.glowEnabled}
-          onChange={() => onChange({ glowEnabled: !controls.glowEnabled })}
-        />
-        <ToggleRow
-          label="Particles"
-          checked={controls.particlesEnabled}
-          onChange={() => onChange({ particlesEnabled: !controls.particlesEnabled })}
-        />
-        <ToggleRow label="Dark Mode" checked disabled onChange={() => {}} />
-      </div>
+    <div
+      className={`pointer-events-auto fixed left-6 top-1/2 z-20 -translate-y-1/2 rounded-2xl border border-white/[0.1] bg-[#050505]/70 shadow-2xl backdrop-blur-2xl transition-[width] duration-300 ease-in-out ${
+        collapsed ? "w-3 p-0" : "w-52 p-3"
+      }`}
+    >
+      <button
+        type="button"
+        onClick={() => setCollapsed((v) => !v)}
+        aria-label={collapsed ? "Expand controls" : "Collapse controls"}
+        title={collapsed ? "Expand controls" : "Collapse controls"}
+        className="absolute -right-3.5 top-1/2 z-10 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/[0.1] bg-[#141417] text-zinc-300 shadow-lg transition-colors hover:bg-white/[0.08] hover:text-zinc-100"
+      >
+        {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+      </button>
+
+      {!collapsed && (
+        <>
+          <h2 className="mb-1.5 px-2 text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+            Controls
+          </h2>
+          <div className="flex flex-col gap-0.5">
+            <ToggleRow
+              label="Show Links"
+              checked={controls.showLinks}
+              onChange={() => onChange({ showLinks: !controls.showLinks })}
+            />
+            <ToggleRow
+              label="Physics"
+              checked={controls.physicsEnabled}
+              onChange={() => onChange({ physicsEnabled: !controls.physicsEnabled })}
+            />
+            <ToggleRow
+              label="Auto Rotate"
+              checked={controls.autoRotate}
+              onChange={() => onChange({ autoRotate: !controls.autoRotate })}
+            />
+            <ToggleRow
+              label="Glow"
+              checked={controls.glowEnabled}
+              onChange={() => onChange({ glowEnabled: !controls.glowEnabled })}
+            />
+            <ToggleRow
+              label="Particles"
+              checked={controls.particlesEnabled}
+              onChange={() => onChange({ particlesEnabled: !controls.particlesEnabled })}
+            />
+            <ToggleRow label="Dark Mode" checked disabled onChange={() => {}} />
+          </div>
+        </>
+      )}
     </div>
   );
 }
