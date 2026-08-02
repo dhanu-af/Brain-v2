@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from "@/components/icons";
+import { ChevronLeftIcon, ChevronRightIcon, HomeIcon } from "@/components/icons";
 import type { SceneControls } from "@/components/graph/Scene";
 
 function ToggleRow({
@@ -42,9 +42,11 @@ function ToggleRow({
 export default function LeftControlsPanel({
   controls,
   onChange,
+  onResetView,
 }: {
   controls: SceneControls;
   onChange: (patch: Partial<SceneControls>) => void;
+  onResetView: () => void;
 }) {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -97,6 +99,18 @@ export default function LeftControlsPanel({
             />
             <ToggleRow label="Dark Mode" checked disabled onChange={() => {}} />
           </div>
+
+          <div className="my-1.5 h-px bg-white/[0.08]" />
+
+          <button
+            type="button"
+            onClick={onResetView}
+            title="Fly the camera back to the default full-graph view"
+            className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[12px] text-zinc-300 transition-colors hover:bg-white/[0.05] hover:text-zinc-100"
+          >
+            <HomeIcon />
+            Reset View
+          </button>
         </>
       )}
     </div>

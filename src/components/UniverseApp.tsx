@@ -44,6 +44,7 @@ export default function UniverseApp({ projects }: { projects: Project[] }) {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [insightsOpen, setInsightsOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<ProjectStatus | null>(null);
+  const [resetSignal, setResetSignal] = useState(0);
   const [controls, setControls] = useState<SceneControls>({
     showLinks: true,
     physicsEnabled: true,
@@ -82,6 +83,10 @@ export default function UniverseApp({ projects }: { projects: Project[] }) {
     setStatusFilter((current) => (current === status ? null : status));
   }
 
+  function handleResetView() {
+    setResetSignal((current) => current + 1);
+  }
+
   return (
     <div className="fixed inset-0 overflow-hidden bg-[#050505]">
       <Scene
@@ -93,11 +98,12 @@ export default function UniverseApp({ projects }: { projects: Project[] }) {
         onOpenInsights={() => setInsightsOpen(true)}
         controls={controls}
         statusFilter={statusFilter}
+        resetSignal={resetSignal}
       />
 
       <SearchBar searchQuery={searchQuery} onSearchChange={setSearchQuery} />
 
-      <LeftControlsPanel controls={controls} onChange={handleControlsChange} />
+      <LeftControlsPanel controls={controls} onChange={handleControlsChange} onResetView={handleResetView} />
 
       <Legend activeStatus={statusFilter} onSelectStatus={handleSelectStatus} />
 

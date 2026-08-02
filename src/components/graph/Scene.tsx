@@ -60,6 +60,7 @@ export default function Scene({
   onOpenInsights,
   controls,
   statusFilter,
+  resetSignal,
 }: {
   projects: Project[];
   searchQuery: string;
@@ -72,6 +73,8 @@ export default function Scene({
   controls: SceneControls;
   /** Set by clicking a legend pill — dims every node not matching this status. */
   statusFilter: ProjectStatus | null;
+  /** Bump this counter to fly the camera back to the default full-graph view. */
+  resetSignal?: number;
 }) {
   const { simulation, nodes, links, nodeById } = useForceGraph(projects);
   const [dragging, setDragging] = useState(false);
@@ -146,6 +149,7 @@ export default function Scene({
         focusPosition={focusNode && focusNode.id !== HUB_ID ? focusNode.position : null}
         enabled={!dragging}
         autoRotate={controls.autoRotate}
+        resetSignal={resetSignal}
       />
 
       {controls.glowEnabled && (
