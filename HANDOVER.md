@@ -1,51 +1,71 @@
-# Handover — 2026-07-27 (continuing later)
+# Handover — 2026-08-01 16:00
 
 ## Goal
-Dhanu's personal, private 3D "Dhanu Brain" app (Next.js + React Three Fiber) — a hub-and-rings knowledge graph of every project she builds, with a right-side control panel, project detail modal, Time Machine, and AI Insights. Live at `brain.dkns.ai`. Current task in progress: **lock the whole site behind a single username/password login** — her explicit words: "only log me. i need only one person log to this site... this is my personal site."
+Dhanu's personal, private 3D "Dhanu Brain" project-launcher app (Next.js 16 +
+React Three Fiber), live at `brain.dkns.ai`. This session covered three
+separate efforts on top of the already-shipped login gate: (1) a cinematic
+"AI OS" visual redesign of the 3D graph, (2) several rounds of catalog
+updates to `src/data/projects.json` to keep it matching her real projects,
+and (3) diagnosing and fixing a broken Vercel↔GitHub auto-deploy pipeline.
 
 ## State
-Auth system is **written but not yet verified, not committed, not deployed**. Specifically:
-- Server-side session (signed cookie via Web Crypto HMAC) — done
-- Login page + Server Action — done
-- Middleware protecting every route — done
-- Logout button wired into the side panel — done
-- **Not done yet**: typecheck/lint/build, local login test, writing the three secrets into `.env.local`, git commit+push, and — critically — **the three env vars are not yet set in Vercel**, so the live production site (`brain.dkns.ai`) is currently deployed *without* this auth layer at all (still fully public).
+Everything is committed, pushed, and **live**. Working tree clean, `main` up
+to date with `origin/main`. Git auto-deploy is confirmed working again
+(verified via a real test commit + deployment after the fix below) — a
+normal `git push` is now sufficient to ship changes, no manual steps needed.
+
+### Cinematic redesign (8 phases, all shipped)
+Built from an approved plan (`C:\Users\dnand\.claude\plans\dreamy-zooming-narwhal.md`)
+after Dhanu's original spec included fictional placeholder nodes (Tourism,
+Hotels, CRM, ERP, etc.) that don't correspond to real projects — resolved by
+using her actual project catalog instead, and status-based coloring
+(Live/Development/Testing/Archived) instead of the spec's conflicting
+category-based legend.
+1. Deep-space background: `#050505` everywhere, 3-layer starfield (`ParticleField.tsx`)
+2. Bloom post-processing (`@react-three/postprocessing`, tuned threshold 0.18) + reactor rings on the hub
+3. Animated "energy" points traveling along hub-links only (`GraphEdges.tsx`'s `EdgeEnergy`)
+4. Hover highlights connected nodes/edges, dims the rest
+5. Floating top-center `SearchBar.tsx` (side panel's own search box kept, both share state)
+6. `ProjectModal.tsx` restyled from centered popup → right-docked sliding glass panel
+7. `LeftControlsPanel.tsx`: toggles for Show Links / Physics / Auto Rotate / Glow / Particles (Dark Mode is an intentionally-disabled placeholder — app is dark-only by design)
+8. Bottom-center `Legend.tsx`
+
+### Post-redesign fixes (from Dhanu's feedback after seeing it live)
+- Clicking a node used to fly the camera in tight (same as search). Now decoupled: `Scene`'s `focusedProjectId` prop is search-only (drives camera), a separate `selectedProjectId` prop just highlights the clicked node without moving the camera — "click stays at normal zoom."
+- `LeftControlsPanel` got the same collapse/expand handle the side panel already had (mirrored to the right edge since it's docked left).
+- `Legend` pills are now clickable status filters — click "Live" to dim everything non-Live; click the active one again to clear.
+
+### Catalog (`src/data/projects.json`) — 14 projects now
+Corrected/added this session: DKNS Digital (added real domain+favicon+Live
+status), Nanduni (was stale "Agri-Econ" sandbox description, now reflects
+its real deployed graduation-portrait site), VillageRide (added, then
+corrected from tech-stack-guesswork to its real description from memory —
+ride-hailing + goods delivery for village taxi associations — plus its new
+`vrides.net` domain), Dhanu AI (added), **NutriAI (added — see caveat
+below)**.
 
 ## Key decisions
-- **Server-side gate, not client-side.** A client-side "if password matches, show content" check would ship the whole app in the JS bundle regardless — trivially bypassable. Built real middleware + signed cookie instead.
-- **No new dependency for signing.** Used the Web Crypto API (`crypto.subtle`, global in both Next.js Middleware's Edge runtime and Node) rather than a JWT library — one fewer thing to install, and it's the only crypto API guaranteed available in Edge middleware.
-- **Fail closed.** If `AUTH_SECRET`/`AUTH_USERNAME`/`AUTH_PASSWORD` are unset, `verifySessionToken` returns `false` and the login action returns `"Login is not configured yet."` — i.e. if she deploys this code before setting the env vars, the site becomes inaccessible to everyone (safe default) rather than accidentally open.
-- **Repo is public** (`dhanu-af/Brain-v2` on GitHub, confirmed via `gh api`). This is *why* credentials must live only in env vars, never hardcoded — anything in source is world-readable.
-- **Simple string comparison for the password check**, not timing-safe comparison. Deliberate tradeoff: this is a single-user personal hobby gate, not a high-value target; added complexity wasn't worth it here.
-- Generated credentials myself (see below) rather than asking her to invent one mid-flow, since she needs something to actually type in — she can change any of the three via Vercel env vars at any time, no code change required.
+- **Real projects only, no fictional nodes.** Dhanu's original cinematic-redesign spec listed generic placeholder nodes (Tourism/Hotels/CRM/ERP/Maps/etc.) mixed with real ones. Confirmed with her to use only the real 13→14 project catalog.
+- **Status-based node coloring kept, not category-based.** Her spec's legend (Green=Active/Orange=Planning/Blue=AI/Purple=Research) mixed two incompatible schemes; nodes are colored by `getStatusColor` (status), so the legend matches that instead of forcing a recolor.
+- **Skipped `react-force-graph`, `leva`, GSAP, `@react-spring/three`** even though her spec named them — `react-force-graph` manages its own renderer (doesn't compose inside an existing R3F `<Canvas>`), `leva` is a dev-debug UI not a production control panel, and Framer Motion (already installed) covers the animation needs GSAP/react-spring would duplicate. Only added `@react-three/postprocessing` (verified peer-dep compatible: react ^19, three >=0.156, fiber ^9).
+- **Camera fly-to is now search-only, not click-driven** — direct user feedback after seeing the live redesign ("i need to click one and go to normal mode").
+- **NutriAI's tech stack is deliberately left blank in the catalog.** Its GitHub repo (`khdanushka-spec/nutriai`) is completely empty (no commits, confirmed via `gh api repos/.../commits` returning "Git Repository is empty") despite Vercel showing a real deployed build — so there was nothing to verify a tech stack against. Description comes from the Vercel deploy's commit message, which is real text, not a guess.
 
 ## Files touched
-- `src/lib/session.ts` — **new**. `createSessionToken()` / `verifySessionToken(token)`, HMAC-SHA256 over an expiry timestamp, 30-day expiry. Also exports `SESSION_COOKIE = "brain_session"` (kept here, not in `auth-actions.ts`, because a `"use server"` file can only export async functions — a plain string const would break the build if exported from there).
-- `src/lib/auth-actions.ts` — **new**, `"use server"`. Exports `login(prevState, formData)` (validates against `process.env.AUTH_USERNAME`/`AUTH_PASSWORD`, sets the HttpOnly/Secure/SameSite=Lax cookie, redirects to `/`) and `logout()` (deletes cookie, redirects to `/login`).
-- `src/app/login/page.tsx` — **new**. Client component, `useActionState(login, {})`, dark-glass form matching the app's existing look.
-- `src/middleware.ts` — **new**. Redirects to `/login` for any request without a valid session cookie; matcher excludes `_next/static`, `_next/image`, `favicon.ico`. `/login` itself is explicitly let through inside the function body.
-- `src/components/panel/SidePanel.tsx` — **modified**, not yet committed. Added a "Log out" button next to the existing "AI Insights" button in the panel header, wired directly to the `logout` server action via a `<form action={logout}>`.
+Redesign: `src/components/graph/{Scene,GraphEdges,GraphNode,HubNode,OrbitRings(new),ParticleField,CameraRig}.tsx`, `src/components/{SearchBar,LeftControlsPanel,Legend}.tsx` (all new), `src/components/UniverseApp.tsx`, `src/components/modal/ProjectModal.tsx`, `src/components/icons.tsx` (added Chevron icons), `src/lib/types.ts` (added `TIER_RING_RADII` export), `src/app/globals.css` + `src/app/login/page.tsx` (background color), `package.json` (+`@react-three/postprocessing`, `+postprocessing`).
+Catalog: `src/data/projects.json`.
+No files are mid-edit — every phase/fix was independently typechecked, linted, built, committed, and pushed.
 
 ## Gotchas / constraints learned
-- `"use server"` files in Next.js can only export async functions — tried putting `SESSION_COOKIE` in `auth-actions.ts` first, moved it to `session.ts` instead.
-- `.env.local` in this repo already contains a `VERCEL_OIDC_TOKEN` (written by an earlier `vercel link` run) — it's real but short-lived/dev-scoped, and the file is confirmed gitignored (`.env*` in `.gitignore`). Append the new auth vars to it, don't overwrite the file.
-- **The live `brain` Vercel project is not git-connected for auto-deploy.** Every successful deploy so far (including the current live Dhanu Brain rebrand) went through `mcp__vercel__deploy_to_vercel` as a direct file upload, not a git push — a git push to `dhanu-af/Brain-v2` does **not** update `brain.dkns.ai` by itself. See "Next steps" — deploying this auth change requires the same direct-deploy path (or her manually reconnecting Git in the Vercel dashboard first, which was left undone last session due to a cross-account permission error).
-- Vercel project id `prj_O2pOiSGhp6qdIdsdGEdK7YkFLFqj`, team `team_IFsD28fF0XXuFVwrVhrnLXnX` (slug `dkns1`, display name "DKNS"). Live aliases: `brain.dkns.ai`, `brain-eight-alpha.vercel.app`, `brain-dkns1.vercel.app`, `brain-dhanu-9494-dkns1.vercel.app`.
-- Generated secrets this session (not yet written anywhere except this doc and the terminal output already shown to Dhanu):
-  - `AUTH_SECRET=75f97e3d8332ae53b8eed2aeb201f3ede4fc99d2860ddf3dec6e4ae74cc43823a1f896bc17200bda53e62b6a5c8de4e1`
-  - `AUTH_PASSWORD=tidal-coral-quartz-6686`
-  - `AUTH_USERNAME` was suggested as `dhanu` but never confirmed with her — ask, or just use it.
+- **This session's Browser pane could not render/screenshot the WebGL canvas at all** — `innerWidth`/`innerHeight` reported 0 for most of the session (briefly worked once, canvas still stuck at default 300×150 either way). All 8 redesign phases were shipped verified only by typecheck/lint/build, not visual inspection — Dhanu did the actual visual QA live. If a fresh session hits the same issue, don't burn time retrying it; rely on code review + her feedback instead.
+- **The Vercel↔GitHub auto-deploy integration silently broke mid-session** — two consecutive pushes (`850a01e`, `d4e623a`) produced zero deployment records on GitHub's own deployments API (`gh api repos/dhanu-af/Brain-v2/deployments`), not just a Vercel-side delay. A dashboard-side disconnect/reconnect of the Git integration (Vercel → brain project → Settings → Git) did **not** fix it. What fixed it: Dhanu re-authorizing the Vercel GitHub App from **GitHub's** side (Settings → Applications → Authorized GitHub Apps), confirmed working via a real test commit that showed up in both `gh api .../deployments` and `mcp__vercel__list_deployments`. If this breaks again, check GitHub's deployments API first (fast, no ambiguity) before assuming it's just slow.
+- **Direct-upload deploy (`mcp__vercel__deploy_to_vercel`) is a working fallback** when Git integration is down — used successfully once this session to ship NutriAI + the 3 post-redesign fixes while the webhook was broken. Needed the full current file tree (read fresh off disk, not from stale conversation context) since it's a stateless full replace, not a diff.
+- **Windows Git Credential Manager keeps caching the wrong GitHub identity** (`khdanushka-spec` instead of `dhanu-af`) and silently breaks `git push` with a 403. Fix each time: `git credential-manager github logout khdanushka-spec && gh auth setup-git` (gh CLI itself stays correctly authenticated as `dhanu-af` throughout — it's specifically git's credential helper that drifts).
+- Vercel project: `prj_O2pOiSGhp6qdIdsdGEdK7YkFLFqj`, team `team_IFsD28fF0XXuFVwrVhrnLXnX` (slug `dkns1`). GitHub repo: `dhanu-af/Brain-v2` (there is also a stale, unrelated `dhanu-af/Brain` repo from before the rebuild — don't confuse the two, `Brain-v2` is correct).
 
 ## Next steps
-1. Append the three vars above to `.env.local` (create if needed) and run `npm run dev` to test the login flow locally end-to-end (login redirects to `/`, wrong password shows the error, logout returns to `/login`, direct visit to `/` while logged out redirects to `/login`).
-2. `npx tsc --noEmit` and `npx eslint .` — neither has been run since these files were added.
-3. `npm run build` — confirm it succeeds (Server Actions + Middleware both need to compile cleanly under Next 16/Turbopack).
-4. `git add -A && git commit` (exclude nothing — `.env.local` is already gitignored) and `git push origin main` to `dhanu-af/Brain-v2`.
-5. Tell Dhanu the three exact key/value pairs to paste into **Vercel dashboard → brain project → Settings → Environment Variables** (Production at minimum) — `AUTH_USERNAME`, `AUTH_PASSWORD`, `AUTH_SECRET` from above (or whatever she wants to change them to).
-6. Once she confirms the env vars are set, redeploy via the same `mcp__vercel__deploy_to_vercel` direct-upload path used last session (see prior conversation for the exact file list/content — everything needed is already in the working tree, nothing new to reconstruct) targeting `name: "brain"`, `teamId: "team_IFsD28fF0XXuFVwrVhrnLXnX"`.
-7. Verify live: `curl -s -o /dev/null -w "%{http_code}" https://brain.dkns.ai/` should now redirect (or return the login page), not the app directly.
+Nothing outstanding — this was a "ship and verify" session, not a "left mid-task" one. If Dhanu comes back with more visual feedback on the redesign (bloom intensity, panel positions/collisions on her screen size, etc.), that's the natural next thread — she was asked to report back after seeing it live but hadn't yet as of this handover.
 
 ## Open questions
-- Does she want `AUTH_USERNAME` to be `dhanu`, or something else?
-- Does she want the generated password kept, or replaced with one of her own choosing?
-- No multi-device/session-revocation concern raised — current design is one shared password, 30-day cookie, no per-device tracking. Fine unless she asks for more later.
+- Does Dhanu want the bloom intensity or any panel positioning adjusted once she's spent more time with the live cinematic redesign?
+- NutriAI's real tech stack is still unconfirmed (repo is empty) — if she ever pushes real code to `khdanushka-spec/nutriai`, the catalog entry should be revisited.
