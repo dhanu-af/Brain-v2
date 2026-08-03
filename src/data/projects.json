@@ -238,6 +238,33 @@
     "lastUpdated": "2026-07-31"
   },
   {
+    "id": "refundpilot",
+    "name": "Tax",
+    "description": "AI-powered Australian individual tax return platform, plus an accountant portal for managing multiple clients' returns.",
+    "purpose": "Reduce a 2-hour Australian tax return into a 5-minute AI conversation, for employees, sole-traders, and gig workers.",
+    "status": "Live",
+    "category": "Business",
+    "tier": "main",
+    "company": "Personal",
+    "website": "https://refundpilot-sigma.vercel.app",
+    "localhost": "http://localhost:3010",
+    "github": "https://github.com/dhanu-af/RefundPilot",
+    "techStack": ["Next.js 16", "Prisma", "PostgreSQL (Supabase)", "TypeScript", "Tailwind CSS v4", "NextAuth", "Anthropic Claude API"],
+    "framework": "Next.js",
+    "database": "PostgreSQL (Supabase)",
+    "hosting": "Vercel — refundpilot-sigma.vercel.app",
+    "aiFeatures": [
+      "AI document upload/classification",
+      "AI-powered per-deduction risk review against real ATO thresholds",
+      "AI bank/share transaction categorisation and CGT extraction",
+      "Conversational gap-filling question engine"
+    ],
+    "tags": ["tax", "accounting", "ai", "fintech"],
+    "notes": "Full Australian individual tax return flow (deductions, CGT/dividends, refund optimiser, AI risk reviewer, review/lodgment) verified to the cent against Dhanu's own real ATO return, plus an accountant portal v1 for directly managing multiple clients' returns.",
+    "createdDate": "2026-08-02",
+    "lastUpdated": "2026-08-03"
+  },
+  {
     "id": "nutriai",
     "name": "NutriAI",
     "description": "Initial MVP: auth, onboarding, AI-powered meal analysis, and an exercise calculator.",
