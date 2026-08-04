@@ -265,6 +265,44 @@
     "lastUpdated": "2026-08-03"
   },
   {
+    "id": "nexora-finance-os",
+    "name": "NEXORA Finance OS",
+    "description": "AI-first finance/ERP platform — double-entry ledger, multi-entity consolidation, AP/AR, banking, procurement, and three AI personas.",
+    "purpose": "Build a modern AI-native finance/ERP platform aiming to beat SAP/Oracle/NetSuite/Xero/QuickBooks on intelligence, usability, implementation speed, and TCO.",
+    "status": "Live",
+    "category": "Business",
+    "tier": "main",
+    "company": "Personal",
+    "website": "https://nexora-finance-os.vercel.app",
+    "github": "https://github.com/khdanushka-spec/nexora-finance-os",
+    "techStack": ["Next.js 16", "Prisma", "PostgreSQL (Neon)", "TypeScript", "Tailwind CSS", "NextAuth", "Anthropic Claude API"],
+    "framework": "Next.js",
+    "database": "PostgreSQL (Neon)",
+    "hosting": "Vercel — nexora-finance-os.vercel.app",
+    "aiFeatures": [
+      "AI Accountant — drafts balanced journal entries from plain-language descriptions, human-approved before posting",
+      "AI Controller — anomaly-detection review gating period close",
+      "AI CFO — board narrative grounded in real P&L/balance sheet data, advisory only"
+    ],
+    "tags": ["finance", "erp", "accounting", "ai"],
+    "notes": "Multi-entity double-entry ledger with full AP/AR, bank reconciliation, purchase orders (PO-to-bill splitting), multi-entity consolidation (intercompany eliminations + FX translation), and all three PRD AI personas — 22 sessions in. Payroll, a tax engine, and live bank-feed sync are deliberately deferred pending real PII/compliance scoping and Plaid credentials.",
+    "createdDate": "2026-08-03",
+    "lastUpdated": "2026-08-04"
+  },
+  {
+    "id": "batchproof",
+    "name": "Batchproof",
+    "description": "PIN-gated validation console — team members enter a PIN and their name to attribute validations.",
+    "purpose": "Give a team a shared console for recording who validated what.",
+    "status": "Live",
+    "category": "Internal Tools",
+    "tier": "supporting",
+    "website": "https://batchproof.co",
+    "tags": ["validation", "internal-tool"],
+    "notes": "Dhanu is a co-worker/collaborator on this one, not the sole owner. The live site is PIN-gated (name + PIN, for attribution), so tech stack, repo, and full purpose are unconfirmed beyond what the public landing page shows — fill in once she shares more details or repo access.",
+    "lastUpdated": "2026-08-04"
+  },
+  {
     "id": "nutriai",
     "name": "NutriAI",
     "description": "Initial MVP: auth, onboarding, AI-powered meal analysis, and an exercise calculator.",
