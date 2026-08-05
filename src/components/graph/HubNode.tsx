@@ -113,7 +113,7 @@ export default function HubNode({ onOpen }: { onOpen: () => void }) {
             fontFamily: "var(--font-geist-sans), sans-serif",
           }}
         >
-          Dhanu Brain
+          Dhanu Labs
         </div>
       </Html>
     </group>

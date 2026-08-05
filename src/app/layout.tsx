@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dhanu Brain",
+  title: "Dhanu Labs",
   description: "The central AI hub of Dhanu's entire development ecosystem.",
 };
 
