@@ -101,7 +101,7 @@ export default function SidePanel({
       <>
       <div className="flex flex-col gap-3 border-b border-white/[0.06] p-4">
         <div className="flex items-center justify-between">
-          <h1 className="text-[13px] font-semibold tracking-wide text-zinc-100">Dhanu Labs</h1>
+          <h1 className="text-[13px] font-semibold tracking-wide text-zinc-100">DKNS Labs</h1>
           <div className="flex items-center gap-1.5">
             <button
               type="button"

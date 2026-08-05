@@ -14,7 +14,7 @@ export default function LoginPage() {
         action={formAction}
         className="w-full max-w-sm rounded-2xl border border-white/[0.1] bg-white/[0.06] p-6 shadow-2xl backdrop-blur-2xl"
       >
-        <h1 className="text-lg font-semibold text-zinc-100">Dhanu Labs</h1>
+        <h1 className="text-lg font-semibold text-zinc-100">DKNS Labs</h1>
         <p className="mt-1 text-xs text-zinc-500">Private — sign in to continue.</p>
 
         <div className="mt-5 flex flex-col gap-3">
