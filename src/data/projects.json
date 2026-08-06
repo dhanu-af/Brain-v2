@@ -322,16 +322,19 @@
   {
     "id": "dhanushka-portfolio",
     "name": "Dhanushka Portfolio",
-    "description": "Personal portfolio site — static HTML/CSS/JS.",
-    "purpose": "Old personal portfolio site, superseded by newer work.",
-    "status": "Archived",
+    "description": "Personal portfolio site — bio, ventures, experience, education, certifications, and skills.",
+    "purpose": "Give Dhanu a real personal portfolio/CV site, replacing the old static placeholder.",
+    "status": "Live",
     "category": "Portfolio",
-    "tier": "archived",
+    "tier": "supporting",
     "company": "Personal",
-    "localhost": "http://localhost:8090",
-    "techStack": ["HTML", "CSS", "JavaScript"],
-    "framework": "Static HTML",
-    "hosting": "Local only",
-    "tags": ["portfolio", "static"]
+    "website": "https://dhanu.dkns.ai",
+    "github": "https://github.com/dhanu-af/dhanushka-portfolio",
+    "techStack": ["Next.js 16", "TypeScript", "Tailwind CSS v4"],
+    "framework": "Next.js",
+    "hosting": "Vercel — dhanu.dkns.ai",
+    "tags": ["portfolio", "personal"],
+    "notes": "Rebuilt from a Figma Make design and restyled with real bio content, replacing the old static HTML/CSS/JS placeholder that used to live here.",
+    "lastUpdated": "2026-08-04"
   }
 ]
