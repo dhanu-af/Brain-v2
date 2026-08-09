@@ -320,6 +320,28 @@
     "lastUpdated": "2026-08-01"
   },
   {
+    "id": "luxlibrary-os",
+    "name": "LuxLibrary OS",
+    "description": "AI-first personal library operating system for a 2,000+ book collection — dashboard, library browser, AI librarian, search, analytics.",
+    "purpose": "Give a serious book collector a beautiful, intelligent OS for managing and exploring their personal library.",
+    "status": "Live",
+    "category": "AI",
+    "tier": "main",
+    "company": "Personal",
+    "website": "https://luxlibrary-os.vercel.app",
+    "localhost": "http://localhost:3013",
+    "github": "https://github.com/khdanushka-spec/luxlibrary-os",
+    "techStack": ["Next.js 16", "TypeScript", "Tailwind CSS v4", "Prisma", "PostgreSQL (Neon)", "Motion"],
+    "framework": "Next.js",
+    "database": "PostgreSQL (Neon) — schema modeled, not yet provisioned",
+    "hosting": "Vercel — luxlibrary-os.vercel.app",
+    "aiFeatures": ["AI Librarian — rule-based chat query engine over the collection (author/genre/page-count/recommend), honestly labeled as not a live LLM yet"],
+    "tags": ["library", "books", "personal", "ai"],
+    "notes": "Marketing home page plus a growing OS app shell running on 28 mock books — dashboard, library browser, book detail, wishlist, authors/genres/quotes pages, real search, live-computed analytics. No real database connected yet (Neon schema modeled but not provisioned), so nothing persists.",
+    "createdDate": "2026-08-09",
+    "lastUpdated": "2026-08-09"
+  },
+  {
     "id": "dhanushka-portfolio",
     "name": "Dhanushka Portfolio",
     "description": "Personal portfolio site — bio, ventures, experience, education, certifications, and skills.",
