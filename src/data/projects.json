@@ -290,6 +290,27 @@
     "lastUpdated": "2026-08-04"
   },
   {
+    "id": "bookmysalon",
+    "name": "BookMySalon",
+    "description": "HotDoc-style multi-tenant salon/barber booking marketplace — real-time availability, double-booking protection, salon owner dashboard, admin approval.",
+    "purpose": "Reduce walk-in queue waiting at salons — find it, choose it, book it, skip the queue.",
+    "status": "Live",
+    "category": "Business",
+    "tier": "main",
+    "company": "Personal",
+    "website": "https://bookmysalon-nu.vercel.app",
+    "localhost": "http://localhost:3014",
+    "github": "https://github.com/dhanu-af/bookmysalon",
+    "techStack": ["Next.js 16", "Prisma", "PostgreSQL (Neon)", "TypeScript", "Tailwind CSS", "NextAuth"],
+    "framework": "Next.js",
+    "database": "PostgreSQL (Neon)",
+    "hosting": "Vercel — bookmysalon-nu.vercel.app",
+    "tags": ["booking", "marketplace", "salon", "scheduling"],
+    "notes": "Full MVP (customer search/booking, salon owner dashboard, admin approval) plus 6 deferred features (live status, queue position, billing architecture, SMS/WhatsApp stub, geocoding architecture, reminder-email cron) shipped 2026-08-11. Homepage rebuilt from a real Figma Make design 2026-08-12. Double-booking protection is enforced by a Postgres exclusion constraint, not just app-level checks. Real Resend/Twilio/Google Maps/Stripe credentials are deliberately on hold, phase 2.",
+    "createdDate": "2026-08-10",
+    "lastUpdated": "2026-08-12"
+  },
+  {
     "id": "batchproof",
     "name": "Batchproof",
     "description": "PIN-gated validation console — team members enter a PIN and their name to attribute validations.",
