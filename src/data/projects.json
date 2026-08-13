@@ -311,6 +311,26 @@
     "lastUpdated": "2026-08-12"
   },
   {
+    "id": "asx-smart-value",
+    "name": "ASX Smart Value",
+    "description": "Systematic equity research tool — a 100-point framework scoring ASX companies on Quality, Valuation, Growth, Financial Strength, Momentum, and Risk.",
+    "purpose": "Answer 'which companies deserve deeper research?', not 'which shares have the lowest P/E' — a shortlist for further work, never a buy signal.",
+    "status": "Live",
+    "category": "Business",
+    "tier": "supporting",
+    "company": "Personal",
+    "website": "https://asx-smart-value-tau.vercel.app",
+    "localhost": "http://localhost:3015",
+    "github": "https://github.com/dhanu-af/asx-smart-value",
+    "techStack": ["Next.js 16", "TypeScript", "Tailwind CSS", "shadcn/ui"],
+    "framework": "Next.js",
+    "hosting": "Vercel — asx-smart-value-tau.vercel.app (manual `vercel --prod` deploy only; GitHub auto-deploy isn't connected)",
+    "tags": ["finance", "investing", "asx", "research"],
+    "notes": "Opportunity Scanner + per-stock Investment Thesis pages, scoring and a rule-based bull/bear thesis generator, running on 20 hand-authored mock ASX companies — no real data provider yet. Real fundamentals/pricing feeds (EODHD, Twelve Data, FMP) were researched but put on hold: ASX's own display-license fee makes every vendor except EODHD double-charge, and even that was judged too expensive for now.",
+    "createdDate": "2026-08-13",
+    "lastUpdated": "2026-08-13"
+  },
+  {
     "id": "batchproof",
     "name": "Batchproof",
     "description": "PIN-gated validation console — team members enter a PIN and their name to attribute validations.",
