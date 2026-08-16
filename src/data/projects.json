@@ -399,5 +399,26 @@
     "tags": ["portfolio", "personal"],
     "notes": "Rebuilt from a Figma Make design and restyled with real bio content, replacing the old static HTML/CSS/JS placeholder that used to live here.",
     "lastUpdated": "2026-08-04"
+  },
+  {
+    "id": "dkns-auditos",
+    "name": "DKNS AuditOS",
+    "description": "Food Safety Audit Operations Platform — plan, conduct, document, report and follow up ISO 22000/19011-style internal audits end-to-end.",
+    "purpose": "Let Dhanu run real, professional food safety audits for clients with full evidence-chain traceability, after completing her Internal Food Safety Auditor training.",
+    "status": "Live",
+    "category": "Business",
+    "tier": "main",
+    "company": "DKNS",
+    "website": "https://www.dhanuaudit.com",
+    "vercel": "https://dkns-auditos.vercel.app",
+    "github": "https://github.com/khdanushka-spec/dkns-auditos",
+    "techStack": ["Next.js 15", "TypeScript", "Prisma 7", "PostgreSQL (Neon)", "NextAuth v5", "Tailwind CSS v4", "jsPDF"],
+    "framework": "Next.js",
+    "database": "PostgreSQL (Neon)",
+    "hosting": "Vercel — Dhanu's personal Hobby account, not the DKNS team",
+    "aiFeatures": ["AI Audit Assistant (wording assist for Evidence/CAR)", "PDF-to-checklist import"],
+    "tags": ["food-safety", "auditing", "compliance", "ISO 22000", "HACCP", "GMP"],
+    "notes": "Full audit lifecycle (Plan→Checklist→Conduct→Evidence→Finding→CAR→Verification→Report→Closure), client portal, analytics/management review, and an AI Audit Assistant — all 13 phases shipped and live. Multi-tenant RBAC (Organisation→Client→ClientSite→Audit).",
+    "lastUpdated": "2026-08-17"
   }
 ]
