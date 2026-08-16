@@ -1,8 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronLeftIcon, ChevronRightIcon, HomeIcon } from "@/components/icons";
+import { ChevronLeftIcon, ChevronRightIcon, GithubIcon, HomeIcon, VercelIcon } from "@/components/icons";
 import type { SceneControls } from "@/components/graph/Scene";
+
+const ACCOUNT_LINKS = [
+  { label: "Vercel — DKNS1", url: "https://vercel.com/dkns1", Icon: VercelIcon },
+  { label: "GitHub — dhanu-af", url: "https://github.com/dhanu-af", Icon: GithubIcon },
+  { label: "Vercel — DKNS", url: "https://vercel.com/dkns", Icon: VercelIcon },
+  { label: "GitHub — khdanushka-spec", url: "https://github.com/khdanushka-spec", Icon: GithubIcon },
+] as const;
+
+function openAllAccountLinks() {
+  for (const { url } of ACCOUNT_LINKS) {
+    window.open(url, "_blank", "noopener,noreferrer");
+  }
+}
 
 function ToggleRow({
   label,
@@ -111,6 +124,34 @@ export default function LeftControlsPanel({
             <HomeIcon />
             Reset View
           </button>
+
+          <div className="my-1.5 h-px bg-white/[0.08]" />
+
+          <div className="flex items-center justify-between px-2 pb-1">
+            <h2 className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">Accounts</h2>
+            <button
+              type="button"
+              onClick={openAllAccountLinks}
+              title="Open all four dashboards in new tabs"
+              className="text-[10px] font-medium text-emerald-400/80 transition-colors hover:text-emerald-300"
+            >
+              Open All
+            </button>
+          </div>
+          <div className="flex flex-col gap-0.5">
+            {ACCOUNT_LINKS.map(({ label, url, Icon }) => (
+              <a
+                key={url}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-[12px] text-zinc-300 transition-colors hover:bg-white/[0.05] hover:text-zinc-100"
+              >
+                <Icon />
+                {label}
+              </a>
+            ))}
+          </div>
         </>
       )}
     </div>
