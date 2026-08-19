@@ -331,6 +331,27 @@
     "lastUpdated": "2026-08-13"
   },
   {
+    "id": "webops-platform",
+    "name": "WEB OPS",
+    "description": "Digital facility operations & compliance platform — checklists, 5S, photo evidence, three-level verification, corrective actions, audit trail.",
+    "purpose": "Replace paper facility-ops/QMS forms with a digital platform: checklists, photo evidence, Operator → Supervisor → QA verification, and corrective actions.",
+    "status": "Live",
+    "category": "Business",
+    "tier": "main",
+    "company": "Personal",
+    "website": "https://webops-platform-three.vercel.app",
+    "localhost": "http://localhost:3017",
+    "github": "https://github.com/dhanu-af/webops-platform",
+    "techStack": ["Next.js 16", "Prisma", "PostgreSQL (Neon)", "TypeScript", "Tailwind CSS v4", "NextAuth"],
+    "framework": "Next.js",
+    "database": "PostgreSQL (Neon)",
+    "hosting": "Vercel — webops-platform-three.vercel.app",
+    "tags": ["operations", "compliance", "checklists", "manufacturing"],
+    "notes": "Deliberately standalone from BlendCaps Ops Platform per explicit instruction, despite the similar domain. Checklists/5S/photo evidence/3-level verification/corrective actions/audit trail all shipped, including real digitized versions of the company's actual paper cleaning-checklist forms, not demo filler. One known open issue: an intermittent 'Minified React error #441' on Submit in production, mitigated with a client-side retry but not fully root-caused as of 2026-08-20 — check HANDOVER.md before assuming it's fixed.",
+    "createdDate": "2026-08-19",
+    "lastUpdated": "2026-08-20"
+  },
+  {
     "id": "batchproof",
     "name": "Batchproof",
     "description": "PIN-gated validation console — team members enter a PIN and their name to attribute validations.",
