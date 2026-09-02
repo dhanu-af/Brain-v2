@@ -394,6 +394,28 @@
     "lastUpdated": "2026-08-28"
   },
   {
+    "id": "production-schedule",
+    "name": "Production Schedule",
+    "description": "Weekly factory production schedule — public board, password-gated Operations editor, and a wall-mounted TV floor display.",
+    "purpose": "Give the factory floor a live, self-updating production schedule anyone can view and only Dhanu edits.",
+    "status": "Live",
+    "category": "Business",
+    "tier": "main",
+    "company": "Personal",
+    "website": "https://production-schedule-three.vercel.app",
+    "localhost": "http://localhost:3020",
+    "github": "https://github.com/khdanushka-spec/production-schedule",
+    "techStack": ["Next.js 15", "PostgreSQL (Neon)", "TypeScript", "Tailwind CSS", "Anthropic Claude API"],
+    "framework": "Next.js",
+    "database": "PostgreSQL (Neon), falls back to a local JSON file — no Prisma, table created on first use",
+    "hosting": "Vercel — production-schedule-three.vercel.app",
+    "aiFeatures": ["Import tab — reads an uploaded schedule photo/screenshot/PDF via Claude Opus 5 structured output, or Excel/CSV via SheetJS, into the right weeks"],
+    "tags": ["manufacturing", "scheduling", "floor-display", "dashboard"],
+    "notes": "Started as a self-publishing Claude Artifact (still live, kept as the original prototype), superseded 1 Sep 2026 by this Next.js site once she wanted it backed by a real database. Public board (/), password-gated Operations (/ops), and a wall-TV floor display (/tv, auto-scaled, 5s polling, pinnable as display-only via /screen) all shipped. KPIs are a separate module, deliberately never shown on the board/schedule views.",
+    "createdDate": "2026-09-01",
+    "lastUpdated": "2026-09-03"
+  },
+  {
     "id": "batchproof",
     "name": "Batchproof",
     "description": "PIN-gated validation console — team members enter a PIN and their name to attribute validations.",
